@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+	<Database UseWindowsAuthentication="false">
+		<IPAddress>database_server</IPAddress>
+		<DbName>database</DbName>
+		<DbUsername>dbuser</DbUsername>
+		<DbPassword Encrypted="true">dbpwd</DbPassword>
+	</Database>
+	<Ise>
+		<BaseUrl>iseBaseUrl</BaseUrl>
+	</Ise>
+	<SponsorPortal>
+		<SponsorPortalUrl>IpAddr</SponsorPortalUrl>
+		<Username>user</Username>
+		<Password Encrypted="true">pwd</Password>
+		<GuestType>guest</GuestType>
+		<PortalId>ID</PortalId>
+		<Location>Locations</Location>
+	</SponsorPortal>
+	<Printers enabled="False">
+		<Printer>PrinterAddr</Printer>
+	</Printers>
+	<AdvancedFeatures>
+		<RDPExtension enabled="True">
+			<CustomFieldName>ui_company_text_label</CustomFieldName>
+			<Prefix>RDP-</Prefix>
+			<Counter>
+				<Min>1</Min>
+				<Max>30</Max>
+			</Counter>
+			<Conditions>
+				<CourseListPath enabled="True">./AppData/CourseList.txt</CourseListPath>
+				<ResourceVersion enabled="True">CML</ResourceVersion>
+			</Conditions>			
+		</RDPExtension>
+		<Emailing>
+			<EmailJob enabled="true">
+				<Name>SummaryEmail</Name>
+				<Sender>senderEmail</Sender>
+				<Subject>Mail subject</Subject>
+				<Recipients>
+					<Recipient>Recipient email</Recipient>
+					<Recipient>Recipient email</Recipient>
+				</Recipients>
+				<ExportFileName>NewlyCreatedAccounts-IseSponsorPortal.csv</ExportFileName>
+				<SMTPServer>
+					<Address>SmptAddr</Address>
+					<Port>25</Port>
+				</SMTPServer>
+			</EmailJob>
+		</Emailing>
+	</AdvancedFeatures>
+	<Output>
+		<GuestName>
+			<Prefix enabled="True">RDP_</Prefix>
+		</GuestName>
+	</Output>
+	<SqlQuerys>
+		<Query>
+			SqlQuery
+		</Query>
+	</SqlQuerys>
+</Config>
