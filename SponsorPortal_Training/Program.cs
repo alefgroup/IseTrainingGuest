@@ -8,7 +8,6 @@ using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
-using SponsorPortal_Training.Report;
 using System.Linq;
 using SponsorPortal_Training.Model;
 using SponsorPortal_Training.Ise;
@@ -31,9 +30,6 @@ namespace SponsorPortal_Training
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            Logger.Info("App SponsorPortal-Training is starting");
-            PrintSettingToConsole();
-            Logger.Info("Set guest prefix");
             _guestPrefix = Settings.Instance.GuestnameModification == true ? Settings.Instance.GuestNamePrefix : "";
 
             Logger.Info("Creating IseUri");
@@ -88,7 +84,8 @@ namespace SponsorPortal_Training
                                 continue;
                             }
                         }
-                    }else if (Settings.Instance.RdpFeature.CourseListEnabled)
+                    }
+                    else if (Settings.Instance.RdpFeature.CourseListEnabled)
                     {
                         if (Settings.Instance.RdpFeature.Courses.Contains(_dt.Rows[i].Field<string>(1)))
                         {
@@ -107,6 +104,7 @@ namespace SponsorPortal_Training
                         }
                     }
                 }
+
                 GuestAccount guestAccount = CreateGuestAccount(i, _iseUri, aditionalAttribute);
 
                 if (guestAccount != null)
@@ -116,13 +114,6 @@ namespace SponsorPortal_Training
             }
 
             PrintAccountListToConsole();
-
-            Logger.Info("Generate reports for accounts and send to printer if enabled");
-            var generator = new ReportGenerator();
-            foreach (var account in _guestAccounts)
-            {
-                generator.GenerateUserReport(account);
-            }
 
             if (Settings.Instance.EmailJobs.Exists(emailJob => emailJob.Name == "SummaryEmail"))
             {
@@ -162,6 +153,7 @@ namespace SponsorPortal_Training
                 Logger.Info(account.Username + " " + account.Password + " " + account.FirstName + " " + account.LastName + " " +account.AccountStartDate + " " + account.AccountExpirationDate + " " + account.AccountDuration + " " + account.OptData1Course + " " + account.OptData2Mail + " " + account.OptData3Company + " " + account.OptData4Tel);
             }
         }
+
         private static string GetUri(string sponsorPortalUrl)
         {
             int indexOf = sponsorPortalUrl.IndexOf(":");
@@ -175,6 +167,7 @@ namespace SponsorPortal_Training
             string uri = string.Format("https://{0}:9060/ers/config/guestuser", iseIpAddress);
             return uri;
         }
+
         private static GuestAccount CreateGuestAccount(int i, string uri, string additionalAttribute)
         {            
             try
@@ -404,6 +397,7 @@ namespace SponsorPortal_Training
                 return null;
             }
         }
+
         private static string GetUserInfoById(string uriId)
         {
             try
@@ -424,6 +418,7 @@ namespace SponsorPortal_Training
                 return null;
             }
         }
+
         private static string GetUserId(WebHeaderCollection myWebHeaderCollection)
         {
             if (myWebHeaderCollection.Count != 0)
@@ -435,6 +430,7 @@ namespace SponsorPortal_Training
             }
             return null;
         }
+
         private static void PrintDataTableToConsole()
         {
 
@@ -447,43 +443,8 @@ namespace SponsorPortal_Training
                 }
             }
         }
-        private static void PrintSettingToConsole()
-        {
-            Logger.Debug(Settings.Instance.DbName);
-            Logger.Debug(Settings.Instance.DbAuth.ToString);
-            Logger.Debug(Settings.Instance.DbIpAddress);
-            Logger.Debug(Settings.Instance.DbUsername);
-            Logger.Debug(HidePassword(Settings.Instance.ConDbString));
-            Logger.Debug(Settings.Instance.IseUrl);
-            Logger.Debug(Settings.Instance.SponsorPortalGuestType);
-            Logger.Debug(Settings.Instance.SponsorPortalLocation);
-            Logger.Debug(Settings.Instance.SponsorPortalPortalId);
-            Logger.Debug(Settings.Instance.SponsorPortalUrl);
-            Logger.Debug(Settings.Instance.SponsorPortalUsername);
-            Logger.Debug(Settings.Instance.Printer);
-            Logger.Debug(Settings.Instance.PrintingEnabled);
-            Logger.Debug(Settings.Instance.SqlQuery);
-            Logger.Debug(Settings.Instance.GuestnameModification);
-            Logger.Debug(Settings.Instance.GuestNamePrefix);
-            Logger.Debug(Settings.Instance.RdpFeature.Enabled);
-            if (Settings.Instance.RdpFeature.Enabled)
-            {
-                Logger.Debug(Settings.Instance.RdpFeature.Counter.Max);
-                Logger.Debug(Settings.Instance.RdpFeature.Counter.Min);
-                Logger.Debug(Settings.Instance.RdpFeature.CustomFieldName);                
-                Logger.Debug(Settings.Instance.RdpFeature.Prefix);
-                if (Settings.Instance.RdpFeature.CourseListEnabled)
-                {
-                    Logger.Debug(Settings.Instance.RdpFeature.CourseListPath);
-                    Logger.Debug(string.Join(",", Settings.Instance.RdpFeature.Courses));
-                }
-                if (Settings.Instance.RdpFeature.ResourceVersionEnabled)
-                {
-                    Logger.Debug(Settings.Instance.RdpFeature.ResourceVersion);
-                }
-            }
-        }
 
+       
         private static string HidePassword(string conDbString)
         {
             return conDbString.Substring(0, conDbString.LastIndexOf('=')) + "=***";
@@ -496,7 +457,7 @@ namespace SponsorPortal_Training
                 SqlConnection conn = new SqlConnection(Settings.Instance.ConDbString);
                 conn.Open();
                 Logger.Info("Connect to Db OK");
-                SqlCommand cmd = new SqlCommand(Settings.Instance.SqlQuery, conn);
+                SqlCommand cmd = new SqlCommand("select * from Users", conn);
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -511,6 +472,7 @@ namespace SponsorPortal_Training
                 Environment.Exit(1);
             }
         }
+
         private static void FulfilDataTable(SqlDataReader reader)
         {
             while (reader.Read())
@@ -525,6 +487,7 @@ namespace SponsorPortal_Training
                 _dt.Rows.Add(reader[0], reader[1], RemDiakritics(reader[2].ToString()), RemDiakritics(reader[3].ToString()), RemDiakritics(reader[4].ToString()), RemDiakritics(reader[5].ToString()), reader[6], fromDate, toDate, validDays, reader[9], reader[10]);           
             }
         }
+
         private static string RemDiakritics(string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
@@ -541,12 +504,14 @@ namespace SponsorPortal_Training
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
+
         private static string ConvertToIseTimeTo(object sqlTime)
         {
             DateTime dtSqlTime = (DateTime)sqlTime;
             string toDate = dtSqlTime.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) + " 23:59";
             return toDate;
         }
+
         private static string ConvertToIseTimeFrom(object sqlTime)
         {
             DateTime dtSqlTime = (DateTime) sqlTime;

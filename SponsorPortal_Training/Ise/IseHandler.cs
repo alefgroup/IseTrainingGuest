@@ -25,8 +25,10 @@ namespace SponsorPortal_Training.Ise
         public List<string> GetGuestsCompanyIds()
         {
             _logger.Info("IseHandler - GetGuestList() - Getting guest user data from ISE");
+            
             var iseUrl = GetUrlAddress(IseIpAddress);
             _logger.Debug($"IseHandler - GetGuestList() - ISE URL: {iseUrl}");
+
             List<IseGuestUser> guestList = new List<IseGuestUser>();
             var client = new RestClient(iseUrl);
             client.Authenticator = new HttpBasicAuthenticator(IseUser, IsePass);
@@ -52,14 +54,17 @@ namespace SponsorPortal_Training.Ise
                 string dateSearch = DateTimeExtensions.StartOfWeek(DateTime.Now.AddDays(7D), DayOfWeek.Monday).AddDays(i).ToString("dd-MMM-yy", culture);
                 searchStrings.Add("CONTAINS." + dateSearch);
                 string resourceUrl = GetUrlWithFilter(GetResourceGuestAll(), filters, searchStrings);
+                
                 _logger.Debug($"IseHandler - GetGuestList() - searching resource={resourceUrl}");
                 request.Resource = resourceUrl;
+                
                 IRestResponse response = client.Execute(request);
                 var content = response.Content; // raw content as string
                 XDocument doc = XDocument.Parse(content);
                 var namespaceManager = new XmlNamespaceManager(new NameTable());
                 namespaceManager.AddNamespace("ns5", "ers.ise.cisco.com");
                 var listOfLinks = doc.XPathSelectElements("//ns5:resource", namespaceManager).ToList();
+               
                 if (listOfLinks.Any())
                 {
                     foreach (var node in listOfLinks)
@@ -72,6 +77,7 @@ namespace SponsorPortal_Training.Ise
             RestRequest detailRequest = new RestRequest();
             detailRequest.Method = Method.GET;
             detailRequest.AddHeader("Accept", "application/vnd.com.cisco.ise.identity.guestuser.2.0+xml");
+
             if (guestList.Any())
             {
                 foreach (var iseGuestUser in guestList)
@@ -114,6 +120,7 @@ namespace SponsorPortal_Training.Ise
             namespaceManager.AddNamespace("ns4", "identity.ers.ise.cisco.com");
 
             string companyName;
+
             try
             {
                 companyName = doc.XPathSelectElement("//ns4:guestuser/customFields/entry/value[../key/text()=\'ui_company_text_label\']", namespaceManager).Value;
@@ -138,11 +145,13 @@ namespace SponsorPortal_Training.Ise
                 OptData2Company = companyName,
                 AccountDuration = content.AccountDuration
             };
+            
             _logger.Debug($"Updated user data:\n" +
                           $"ID: {iseUpdatedUser.IseUserId}\n" +
                           $"Name: {iseUpdatedUser.FirstName} {iseUpdatedUser.LastName}\n" +
                           $"Date: {iseUpdatedUser.AccountStartDate} {iseUpdatedUser.AccountExpirationDate}\n" +
                           $"Company: {iseUpdatedUser.OptData2Company}\n");
+            
             return iseUpdatedUser;
         }
 
@@ -170,11 +179,13 @@ namespace SponsorPortal_Training.Ise
             {
                 throw new InvalidOperationException("Length of filter lists differs from each other. ");
             }
+
             StringBuilder builder = new StringBuilder();
             builder.Append(urlAddress);
 
             string fill = "&filter=";
             builder.AppendFormat("{0}", "?size=100");
+
             for (int i = 0; i < filters.Count; i++)
             {
                 if (string.IsNullOrEmpty(searchString[i]))
@@ -190,11 +201,13 @@ namespace SponsorPortal_Training.Ise
                     builder.Append(searchString[i]);
                     continue;
                 };
+
                 builder.Append(fill);
                 builder.Append(filters[i]);
                 builder.Append(".");
                 builder.Append(searchString[i]);
             }
+
             return builder.ToString();
         }
     }
