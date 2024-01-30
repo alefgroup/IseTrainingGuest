@@ -27,9 +27,8 @@ namespace SponsorPortal_Training.AppCode
         public string SponsorPortalLocation;
         public string SponsorPortalPortalId;
 
-        public string Printer;
-        public bool PrintingEnabled;
-        public string SqlQuery;
+        //public string Printer;
+        //public bool PrintingEnabled;
 
         public bool GuestnameModification;
         public string GuestNamePrefix;
@@ -71,9 +70,8 @@ namespace SponsorPortal_Training.AppCode
             SponsorPortalPortalId = config.ReadConfig("SponsorPortal", "PortalId");
             SponsorPortalLocation = config.ReadConfig("SponsorPortal", "Location");
 
-            Printer = config.ReadConfig("Printers", "Printer");
-            PrintingEnabled = config.ReadConfigAttrBool("Printers", "enabled");
-            SqlQuery = config.ReadConfig("SqlQuerys", "Query");
+            //Printer = config.ReadConfig("Printers", "Printer");
+            //PrintingEnabled = config.ReadConfigAttrBool("Printers", "enabled");
 
             GuestnameModification = config.ReadConfigAttrBool("Output/GuestName/Prefix", "enabled");
             GuestNamePrefix = config.ReadConfig("Output", "GuestName/Prefix");

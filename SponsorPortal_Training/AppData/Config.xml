@@ -17,22 +17,7 @@
 		<PortalId>ID</PortalId>
 		<Location>Locations</Location>
 	</SponsorPortal>
-	<Printers enabled="False">
-		<Printer>PrinterAddr</Printer>
-	</Printers>
 	<AdvancedFeatures>
-		<RDPExtension enabled="True">
-			<CustomFieldName>ui_company_text_label</CustomFieldName>
-			<Prefix>RDP-</Prefix>
-			<Counter>
-				<Min>1</Min>
-				<Max>30</Max>
-			</Counter>
-			<Conditions>
-				<CourseListPath enabled="True">./AppData/CourseList.txt</CourseListPath>
-				<ResourceVersion enabled="True">CML</ResourceVersion>
-			</Conditions>			
-		</RDPExtension>
 		<Emailing>
 			<EmailJob enabled="true">
 				<Name>SummaryEmail</Name>
@@ -55,9 +40,4 @@
 			<Prefix enabled="True">RDP_</Prefix>
 		</GuestName>
 	</Output>
-	<SqlQuerys>
-		<Query>
-			SqlQuery
-		</Query>
-	</SqlQuerys>
 </Config>
